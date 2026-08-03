@@ -9,9 +9,11 @@ class User(db.Model):
     username = db.Column(db.String)
     _password_hash = db.Column(db.String)
 
+    notes = db.relationship('Note', back_populates='user')
+
     @hybrid_property
     def password_hash(self):
-        return AttributeError("password hashes may not be viewed")
+        raise AttributeError("Password hashes may not be viewed")
     
     @password_hash.setter
     def password_hash(self, password):
@@ -22,4 +24,18 @@ class User(db.Model):
         return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
     
     def __repr__(self):
-        return f'<User: {self.username}'
+        return f'<User: {self.username}>'
+    
+class Note(db.Model):
+    __tablename__ = 'notes'
+
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String, nullable=False)
+    body = db.Column(db.String(200))
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
+
+    user = db.relationship('User', back_populates='notes')
+
+    def __repr__(self):
+        return f'<Note  {self.title} : {self.body}>'
