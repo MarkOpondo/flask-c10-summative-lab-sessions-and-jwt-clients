@@ -1,4 +1,6 @@
 from sqlalchemy.ext.hybrid import hybrid_property
+from marshmallow import fields, validate
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from app import db, bcrypt
 
@@ -9,7 +11,7 @@ class User(db.Model):
     username = db.Column(db.String)
     _password_hash = db.Column(db.String)
 
-    notes = db.relationship('Note', back_populates='user')
+    notes = db.relationship('Note', back_populates='user', cascade="all, delete-orphan")
 
     @hybrid_property
     def password_hash(self):
@@ -35,7 +37,43 @@ class Note(db.Model):
     body = db.Column(db.String(200))
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
 
-    user = db.relationship('User', back_populates='notes')
+    user = db.relationship('User', back_populates='notes', cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<Note  {self.title} : {self.body}>'
+    
+
+# schemas
+class UserSchema(SQLAlchemyAutoSchema):
+    id = fields.Int(dump_only=True)
+    username = fields.String(required=True)
+
+    notes = fields.List(fields.Nested(lambda: NoteSchema(exclude=("user",))), dump_only=True)
+    class Meta:
+        model = User
+        fields = ("id", "username", "notes")
+        load_instance=True
+        sqla_session = db.session
+        ordered=True
+
+class NoteSchema(SQLAlchemyAutoSchema):
+    id = fields.Int(dump_only=True)
+    title = fields.String(required=True)
+    body = fields.String(validate=validate.Length(max=200))
+    user_id = fields.Int(required=True)
+
+    user = fields.Nested(lambda: UserSchema(exclude=("notes",)), dump_only=True)
+
+    class Meta:
+        model = Note
+        fields = ("id", "title", "body", "user_id", "user")
+        load_instance=True
+        sqla_session = db.session
+        ordered=True
+
+
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
+
+note_schema = NoteSchema()
+notes_schema = NoteSchema(many=True)
