@@ -72,6 +72,18 @@ class NoteSchema(SQLAlchemyAutoSchema):
         ordered=True
 
 
+class PaginationResponseSchema(Schema):
+    total = fields.Int()
+    page = fields.Int()
+    per_page = fields()
+    pages = fields.Int()
+    has_next = fields.Bool()
+    has_prev = fields.Bool()
+
+    items = fields.List(fields.Raw())
+
+
+
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
