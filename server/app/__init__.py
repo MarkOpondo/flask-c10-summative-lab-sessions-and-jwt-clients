@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
-from flask_restful import Api
+# from flask_restful import Api
 from sqlalchemy import MetaData
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
@@ -19,7 +19,7 @@ db = SQLAlchemy(metadata=metadata)
 migrate = Migrate()
 ma = Marshmallow()
 bcrypt = Bcrypt()
-api = Api(prefix='/api')
+# api = Api(prefix='/api')
 jwt = JWTManager()
 
 def create_app(config_name='development'):
@@ -30,13 +30,16 @@ def create_app(config_name='development'):
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)
-    api.init_app(app)
+    # api.init_app(app)
     # bcrypt = Bcrypt(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
 
+    from app.routes import api_bp
+    app.register_blueprint(api_bp, url_prefix='/api')
+
     with app.app_context():
-        from . import models
+        from app import models
 
     @app.get('/')
     def index():
