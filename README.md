@@ -60,7 +60,7 @@ Launch the server locally with one of the following commands:
 ```bash
 python app.py
 ```
-The server will run on `http://127.0.0`.
+The server will run on `http://127.0.0.1:5002`.
 
 ---
 
@@ -68,7 +68,7 @@ The server will run on `http://127.0.0`.
 
 | Method | Endpoint | Auth | Description |
 | :--- | :--- | :---: | :--- |
-| **GET** | `/` | ❌ | Returns the base workout app welcome payload. |
+| **GET** | `/` | ❌ | Returns the base notes app welcome payload. |
 | **GET** | `/api/users` | ❌ | Fetches all users and their respective nested notes. |
 | **POST** | `/api/signup` | ❌ | Registers a new user. Returns a signed access JWT. |
 | **POST** | `/api/login` | ❌ | Validates credentials. Returns an access JWT token. |
