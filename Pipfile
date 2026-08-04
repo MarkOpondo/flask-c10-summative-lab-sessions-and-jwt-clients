@@ -14,6 +14,9 @@ flask-restful = ">=0.3.10"
 pytest = ">=7.4.0"
 flask-bcrypt = ">=1.0.1"
 flask-jwt-extended = "*"
+flask-marshmallow = "*"
+sqlalchemy = "*"
+marshmallow-sqlalchemy = "*"
 
 [dev-packages]
 
